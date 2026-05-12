@@ -10,6 +10,7 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from video_frame_tools.cli import _default_output_dir, _default_report_path, _default_roi_path
+from video_frame_tools.ffmpeg_utils import CropSpec, build_video_filter
 from video_frame_tools.image_ops import channel_image, normalize_channels, save_channel_exports
 from video_frame_tools.video_metadata import VideoMetadata
 
@@ -85,6 +86,16 @@ class ImageOpsTests(unittest.TestCase):
         self.assertIn("Run Summary", text)
         self.assertIn("frames_written: 10", text)
         self.assertIn('channels: ["red", "gray"]', text)
+
+    def test_build_video_filter_supports_frame_sampling(self) -> None:
+        self.assertEqual(
+            build_video_filter(frame_step=2, start_frame=1),
+            "select='not(mod(n-0,2))'",
+        )
+        self.assertEqual(
+            build_video_filter(crop=CropSpec(x=10, y=20, width=100, height=200), frame_step=3, start_frame=2),
+            "crop=100:200:10:20,select='not(mod(n-1,3))'",
+        )
 
 
 if __name__ == "__main__":

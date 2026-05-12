@@ -20,6 +20,22 @@ class CropSpec:
         return f"crop={self.width}:{self.height}:{self.x}:{self.y}"
 
 
+def build_video_filter(crop: Optional[CropSpec] = None, frame_step: int = 1, start_frame: int = 1) -> str | None:
+    if frame_step < 1:
+        raise ValueError("frame_step must be 1 or greater.")
+    if start_frame < 1:
+        raise ValueError("start_frame uses 1-based indexing and must be 1 or greater.")
+
+    filters: list[str] = []
+    if crop is not None:
+        filters.append(crop.to_ffmpeg_filter())
+    if frame_step > 1 or start_frame > 1:
+        start_index = start_frame - 1
+        filters.append(f"select='not(mod(n-{start_index},{frame_step}))'")
+
+    return ",".join(filters) if filters else None
+
+
 def ensure_ffmpeg() -> None:
     if resolve_ffmpeg_executable() is None:
         raise RuntimeError(
@@ -94,6 +110,8 @@ def extract_frames_to_png(
     output_dir: Path,
     crop: Optional[CropSpec] = None,
     max_frames: Optional[int] = None,
+    frame_step: int = 1,
+    start_frame: int = 1,
 ) -> list[Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     pattern = output_dir / "frame_%06d.png"
@@ -106,8 +124,9 @@ def extract_frames_to_png(
         "-i",
         str(video_path),
     ]
-    if crop is not None:
-        command += ["-vf", crop.to_ffmpeg_filter()]
+    video_filter = build_video_filter(crop=crop, frame_step=frame_step, start_frame=start_frame)
+    if video_filter is not None:
+        command += ["-vf", video_filter]
     if max_frames is not None:
         command += ["-frames:v", str(max_frames)]
     command += [

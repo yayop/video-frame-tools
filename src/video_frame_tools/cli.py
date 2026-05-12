@@ -153,6 +153,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
             raw_dir,
             crop=crop,
             max_frames=args.max_frames,
+            frame_step=int(args.frame_step),
+            start_frame=int(args.start_frame),
         )
 
         source_dir = output_dir / "source" if args.keep_source else None
@@ -189,6 +191,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
             "channels": requested_channels,
             "workers": int(args.workers),
             "max_frames": args.max_frames,
+            "frame_step": int(args.frame_step),
+            "start_frame": int(args.start_frame),
             "keep_source": bool(args.keep_source),
             "crop": asdict(crop) if crop is not None else None,
         },
@@ -247,6 +251,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--max-frames",
         type=int,
         help="Limit extraction to the first N frames. Useful for benchmarking.",
+    )
+    extract.add_argument(
+        "--frame-step",
+        type=int,
+        default=1,
+        help="Export every Nth frame. Example: 2 exports every other frame.",
+    )
+    extract.add_argument(
+        "--start-frame",
+        type=int,
+        default=1,
+        help="1-based frame number where sampling starts. Example: 1 with --frame-step 2 exports 1, 3, 5...",
     )
     extract.set_defaults(func=cmd_extract)
 

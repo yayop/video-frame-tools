@@ -146,6 +146,12 @@ python -m video_frame_tools extract "C:\Users\YourName\Videos\input.mp4" --roi "
 
 The final output folder will contain `gray`, `green`, `red`, and `blue` subfolders, plus `manifest.json` and `video_metadata.txt`.
 
+To export every other frame, starting from frame 1:
+
+```powershell
+python -m video_frame_tools extract "C:\Users\YourName\Videos\input.mp4" --roi "C:\Users\YourName\Videos\input\roi.json" --channels gray --frame-step 2 --start-frame 1 --workers 4
+```
+
 ### Windows troubleshooting
 
 If you see `No module named video_frame_tools`, PowerShell is usually in the wrong folder or the package was not installed in the active virtual environment.
@@ -248,6 +254,20 @@ Use `--max-frames` to time a fixed slice of a video, and `--workers` to compare 
 ```bash
 video-frames extract input.mp4 --max-frames 200 --channels red green blue gray --workers 1
 video-frames extract input.mp4 --max-frames 200 --channels red green blue gray --workers 4
+```
+
+### 6. Export every Nth frame
+
+Use `--frame-step` to sample frames. Frame numbers are 1-based for the user-facing CLI.
+
+```bash
+video-frames extract input.mp4 --roi input/roi.json --channels gray --frame-step 2 --start-frame 1
+```
+
+That exports frames 1, 3, 5, 7, and so on. To start from frame 2 instead:
+
+```bash
+video-frames extract input.mp4 --roi input/roi.json --channels gray --frame-step 2 --start-frame 2
 ```
 
 ## ROI workflow
