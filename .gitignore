@@ -1,0 +1,29 @@
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.DS_Store
+output/
+roi.json
+*.pyc
+
+# Local input videos should not be committed.
+*.mp4
+*.mov
+*.mkv
+*.avi
+
+# Generated frame extraction outputs.
+*/red/
+*/green/
+*/blue/
+*/gray/
+*/source/
+*/reference_frame.png
+*/roi.json
+*/video_metadata.txt
+*/manifest.json
+frame_*.png

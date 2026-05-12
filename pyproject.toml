@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "video-frame-tools"
+version = "0.1.0"
+description = "Extract PNG frame sequences from video, crop ROI, and export color channels."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "numpy>=1.24",
+  "Pillow>=10.0",
+  "imageio-ffmpeg>=0.6.0",
+]
+
+[project.scripts]
+video-frames = "video_frame_tools.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
