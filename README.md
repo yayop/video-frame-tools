@@ -34,6 +34,109 @@ If you prefer not to install a system `ffmpeg`, `pip install -e .` will also bri
 pip install -e .
 ```
 
+## Windows setup
+
+The tool works on Windows from PowerShell. The most reliable workflow is to use a Python virtual environment and run the package with `python -m video_frame_tools`.
+
+### 1. Install Python and Git
+
+Install Python 3.9 or newer from https://www.python.org/downloads/windows/ and enable `Add python.exe to PATH` during installation.
+
+You can also install Python and Git from PowerShell with `winget`:
+
+```powershell
+winget install -e --id Python.Python.3.12
+winget install -e --id Git.Git
+```
+
+Close and reopen PowerShell after installing command-line tools, then verify:
+
+```powershell
+python --version
+git --version
+```
+
+### 2. Get the project
+
+```powershell
+git clone https://github.com/yayop/video-frame-tools.git
+cd video-frame-tools
+```
+
+If you downloaded the ZIP from GitHub instead, extract it and open PowerShell inside the extracted folder.
+
+### 3. Create a virtual environment
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e .
+```
+
+If PowerShell blocks activation scripts, run this once and then activate the environment again:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+### 4. FFmpeg on Windows
+
+You do not strictly need to install a system `ffmpeg`. This project depends on `imageio-ffmpeg`, which provides a bundled `ffmpeg` binary and is installed by `python -m pip install -e .`.
+
+If you want a system `ffmpeg` available from PowerShell, install it with `winget`:
+
+```powershell
+winget install -e --id Gyan.FFmpeg
+```
+
+Then close and reopen PowerShell and verify:
+
+```powershell
+ffmpeg -version
+```
+
+If you already use Chocolatey, this is another option:
+
+```powershell
+choco install ffmpeg -y
+```
+
+Manual downloads are available from the official FFmpeg download page: https://www.ffmpeg.org/download.html
+
+### 5. Run ROI selection on Windows
+
+Use a full video path or run the command from the folder containing the video:
+
+```powershell
+python -m video_frame_tools roi "C:\Users\YourName\Videos\input.mp4"
+```
+
+The ROI selector opens in your default browser. Draw a rectangle and click `Save ROI`.
+
+For `C:\Users\YourName\Videos\input.mp4`, the tool creates:
+
+```text
+C:\Users\YourName\Videos\input\
+  roi.json
+  reference_frame.png
+  video_metadata.txt
+```
+
+### 6. Extract grayscale first
+
+```powershell
+python -m video_frame_tools extract "C:\Users\YourName\Videos\input.mp4" --roi "C:\Users\YourName\Videos\input\roi.json" --channels gray --workers 4
+```
+
+### 7. Extract the remaining channels
+
+```powershell
+python -m video_frame_tools extract "C:\Users\YourName\Videos\input.mp4" --roi "C:\Users\YourName\Videos\input\roi.json" --channels green red blue --workers 4
+```
+
+The final output folder will contain `gray`, `green`, `red`, and `blue` subfolders, plus `manifest.json` and `video_metadata.txt`.
+
 ## Usage
 
 ### 1. Pick an ROI interactively
