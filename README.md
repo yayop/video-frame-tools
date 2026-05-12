@@ -67,6 +67,15 @@ If you downloaded the ZIP from GitHub instead, extract it and open PowerShell in
 
 ### 3. Create a virtual environment
 
+Make sure PowerShell is inside the cloned project folder before creating or using the virtual environment:
+
+```powershell
+pwd
+Test-Path pyproject.toml
+```
+
+`Test-Path pyproject.toml` should print `True`.
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -136,6 +145,35 @@ python -m video_frame_tools extract "C:\Users\YourName\Videos\input.mp4" --roi "
 ```
 
 The final output folder will contain `gray`, `green`, `red`, and `blue` subfolders, plus `manifest.json` and `video_metadata.txt`.
+
+### Windows troubleshooting
+
+If you see `No module named video_frame_tools`, PowerShell is usually in the wrong folder or the package was not installed in the active virtual environment.
+
+Check your current folder:
+
+```powershell
+pwd
+Test-Path pyproject.toml
+```
+
+If `Test-Path pyproject.toml` prints `False`, go to the cloned repository folder:
+
+```powershell
+cd "$env:USERPROFILE\video-frame-tools"
+```
+
+If your clone is somewhere else, use that path instead.
+
+Then activate the environment and install the project again:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e .
+python -m video_frame_tools --help
+```
+
+If PowerShell is currently in `C:\WINDOWS\system32`, do not create the project or virtual environment there. Move to a user folder such as `Documents`, `Desktop`, or your Git clone folder first.
 
 ## Usage
 
